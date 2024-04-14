@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         HStack {
-            CardView(isFaceUp: true)
+            CardView()
             CardView()
             CardView()
             CardView()
@@ -21,23 +21,30 @@ struct ContentView: View {
 }
 
 struct CardView: View {
-    var isFaceUp: Bool = false
+    @State var isFaceUp: Bool = false
     
     var body: some View 
     {
-        ZStack(content: 
+        ZStack
         {
-            if isFaceUp 
+            let base = RoundedRectangle(cornerRadius: 12)
+            // Let is used as a CONST variable type. It DOES NOT CHANGE
+            // ALSO Swift will infer the type of struct like Rounded Rectangle. You do NOT have to tell it.
+            // Option + click give you the struct type
+            if isFaceUp
             {
-                RoundedRectangle(cornerRadius: 12).foregroundColor(.white)
-                RoundedRectangle(cornerRadius: 12).strokeBorder(lineWidth: 2)
+                base.foregroundColor(.white)
+                base.strokeBorder(lineWidth: 2)
                 Text("👻").font(.largeTitle)
             } 
             else 
             {
-                RoundedRectangle(cornerRadius: 12)
+                base.fill()
             }
-        })
+        }
+        .onTapGesture {
+            isFaceUp.toggle()
+        }
     }
 }
 
