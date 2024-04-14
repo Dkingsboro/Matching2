@@ -8,20 +8,63 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojis = ["👻", "🎃","🕷️","👹","👹"]
+    let emojis = ["👻", "🎃","🕷️","👹","💀","🕸️","🧙","🧟","🍬","🦇","🐈‍⬛","🧛"]
     // [String] is the same as Array<String> . Once again that inference from Swift
     // You can ALSO let it be let emojis: [blah blah blah] to REALLY let Swift infer
-
+    @State var cardCount: Int = 4
+    
     var body: some View {
-        HStack 
+        VStack{
+            cards
+            cardCountAdjusters
+        }
+        .padding() // Padding for buttons & cards
+    }
+    
+    
+    
+    var cards: some View {
+        HStack // Horizontal Card Stack
         {
-            ForEach(emojis.indices, id: \.self){ index in
+            ForEach(0..<cardCount, id: \.self){ index in
                 CardView(content: emojis[index])
             }
-            // A Range of Integers that goes from 0 up to but not including 4
         }
-        .foregroundColor(.orange)
-        .padding()
+        .foregroundColor(.orange) // Making ONLY cards orange
+    }
+    
+    var cardCountAdjusters: some View {
+        HStack // Horizontal Button Stack
+        {
+            cardRemover
+            Spacer() // Spacer between icons
+            cardAdder
+        }
+        .imageScale(.large)
+        .font(.largeTitle)
+
+    }
+    
+    var cardRemover: some View{
+        Button(action: { // Button to subtract cards using stack icon
+            if cardCount > 1
+            {
+                cardCount -= 1
+            }
+        }, label: {
+            Image(systemName: "rectangle.stack.badge.minus")
+        })
+    }
+    
+    var cardAdder: some View {
+        Button(action: { // Button to add cards using stack icon
+            if cardCount < emojis.count
+            {
+                cardCount += 1
+            }
+        }, label: {
+            Image(systemName: "rectangle.stack.badge.plus")
+        })
     }
 }
 
