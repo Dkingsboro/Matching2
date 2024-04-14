@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    let emojis = ["👻", "🎃","🕷️","👹","👹"]
+    // [String] is the same as Array<String> . Once again that inference from Swift
+    // You can ALSO let it be let emojis: [blah blah blah] to REALLY let Swift infer
+
     var body: some View {
-        HStack {
-            CardView()
-            CardView()
-            CardView()
-            CardView()
+        HStack 
+        {
+            ForEach(emojis.indices, id: \.self){ index in
+                CardView(content: emojis[index])
+            }
+            // A Range of Integers that goes from 0 up to but not including 4
         }
         .foregroundColor(.orange)
         .padding()
@@ -21,7 +26,8 @@ struct ContentView: View {
 }
 
 struct CardView: View {
-    @State var isFaceUp: Bool = false
+    let content: String
+    @State var isFaceUp: Bool = true
     
     var body: some View 
     {
@@ -35,8 +41,8 @@ struct CardView: View {
             {
                 base.foregroundColor(.white)
                 base.strokeBorder(lineWidth: 2)
-                Text("👻").font(.largeTitle)
-            } 
+                Text(content).font(.largeTitle)
+            }
             else 
             {
                 base.fill()
