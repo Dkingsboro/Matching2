@@ -15,7 +15,10 @@ struct ContentView: View {
     
     var body: some View {
         VStack{
-            cards
+            ScrollView{
+                cards
+            }
+            Spacer()
             cardCountAdjusters
         }
         .padding() // Padding for buttons & cards
@@ -24,10 +27,11 @@ struct ContentView: View {
     
     
     var cards: some View {
-        HStack // Horizontal Card Stack
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]) // Horizontal Card Stack
         {
             ForEach(0..<cardCount, id: \.self){ index in
                 CardView(content: emojis[index])
+                    .aspectRatio(2/3, contentMode: .fit)
             }
         }
         .foregroundColor(.orange) // Making ONLY cards orange
@@ -42,61 +46,55 @@ struct ContentView: View {
         }
         .imageScale(.large)
         .font(.largeTitle)
-
+        
+    }
+    
+    func cardCountAdjuster(by offset: Int, Symbol: String) -> some View {
+        Button(action: {
+            cardCount += offset
+        }, label: {
+            Image(systemName: Symbol)
+        })
+        .disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
     }
     
     var cardRemover: some View{
-        Button(action: { // Button to subtract cards using stack icon
-            if cardCount > 1
-            {
-                cardCount -= 1
-            }
-        }, label: {
-            Image(systemName: "rectangle.stack.badge.minus")
-        })
+        cardCountAdjuster(by: -1, Symbol: "rectangle.stack.badge.minus")
     }
     
     var cardAdder: some View {
-        Button(action: { // Button to add cards using stack icon
-            if cardCount < emojis.count
-            {
-                cardCount += 1
-            }
-        }, label: {
-            Image(systemName: "rectangle.stack.badge.plus")
-        })
+        cardCountAdjuster(by: +1, Symbol: "rectangle.stack.badge.plus")
     }
-}
-
-struct CardView: View {
-    let content: String
-    @State var isFaceUp: Bool = true
     
-    var body: some View 
-    {
-        ZStack
+    struct CardView: View {
+        let content: String
+        @State var isFaceUp: Bool = true
+        
+        var body: some View
         {
-            let base = RoundedRectangle(cornerRadius: 12)
-            // Let is used as a CONST variable type. It DOES NOT CHANGE
-            // ALSO Swift will infer the type of struct like Rounded Rectangle. You do NOT have to tell it.
-            // Option + click give you the struct type
-            if isFaceUp
+            ZStack
             {
-                base.foregroundColor(.white)
-                base.strokeBorder(lineWidth: 2)
-                Text(content).font(.largeTitle)
+                let base = RoundedRectangle(cornerRadius: 12)
+                // Let is used as a CONST variable type. It DOES NOT CHANGE
+                // ALSO Swift will infer the type of struct like Rounded Rectangle. You do NOT have to tell it.
+                // Option + click give you the struct type
+                Group
+                {
+                    base.foregroundColor(.white)
+                    base.strokeBorder(lineWidth: 2)
+                    Text(content).font(.largeTitle)
+                }
+                .opacity(isFaceUp ? 1 : 0)
+                base.fill().opacity(isFaceUp ? 0 : 1)
+                
             }
-            else 
-            {
-                base.fill()
+            .onTapGesture {
+                isFaceUp.toggle()
             }
-        }
-        .onTapGesture {
-            isFaceUp.toggle()
         }
     }
 }
+    #Preview {
+        ContentView()
+    }
 
-#Preview {
-    ContentView()
-}
